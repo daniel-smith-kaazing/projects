@@ -6,8 +6,10 @@ Dan Smith
 
 MQTT 3.1 specs:
 http://public.dhe.ibm.com/software/dw/webservices/ws-mqtt/mqtt-v3r1.html
+
 MQTT 3.1.1 draft spec:
 http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/csprd01/mqtt-v3.1.1-csprd01.html
+
 Apache MQ MQTT:
 http://activemq.apache.org/mqtt.html
 
