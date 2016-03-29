@@ -36,6 +36,7 @@ See the MqttProxy section of the config\gateway-config-mqtt-amq.xml config file.
 
 Set that value to the host that Active MQ is running on.
 
+```xml
   <service>
     <name>MqttProxy</name>
     <description>Proxy Service</description>
@@ -57,6 +58,7 @@ Set that value to the host that Active MQ is running on.
     </cross-site-constraint>
     -->
   </service>
+```
 
 ## ACTIVEMQ 
 
