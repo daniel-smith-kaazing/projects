@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<gateway-config xmlns="http://xmlns.kaazing.com/2012/09/gateway">
+
+  <properties>
+    <property>
+      <name>gateway.host</name>
+      <value>192.168.4.112</value>
+    </property>
+    <property>
+      <name>mqtt.provider.host</name>
+      <value>192.168.4.112</value>
+    </property>
+    <property>
+      <name>gateway.base.port</name>
+      <value>8000</value>
+    </property>
+    <property>
+      <name>gateway.extras.port</name>
+      <value>8001</value>
+    </property>
+  </properties>
+
+  <service>
+    <name>echo</name>
+    <description>Simple echo service</description>
+    <accept>ws://${gateway.host}:${gateway.extras.port}/echo</accept>
+
+    <type>echo</type>
+
+    <!--
+    <realm-name>demo</realm-name>
+    <authorization-constraint>
+      <require-role>AUTHORIZED</require-role>
+    </authorization-constraint>
+    -->
+
+    <cross-site-constraint>
+      <allow-origin>http://${gateway.host}:${gateway.extras.port}</allow-origin>
+    </cross-site-constraint>
+  </service>
+
+  <service>
+    <name>base-directory</name>
+    <description>Directory service for base files</description>
+    <accept>http://${gateway.host}:${gateway.base.port}/</accept>
+
+    <type>directory</type>
+    <properties>
+      <directory>/base</directory>
+      <welcome-file>index.html</welcome-file>
+      <error-pages-directory>/error-pages</error-pages-directory>
+      <options>indexes</options>
+    </properties>
+
+    <!--
+    <realm-name>demo</realm-name>
+
+    <authorization-constraint>
+      <require-role>AUTHORIZED</require-role>
+    </authorization-constraint>
+    -->
+  </service>
+
+  <service>
+    <name>extras-directory</name>
+    <description>Directory service for demo (extras) files</description>
+    <accept>http://${gateway.host}:${gateway.extras.port}/</accept>
+    <type>directory</type>
+    <properties>
+      <directory>/extras</directory>
+      <welcome-file>index.html</welcome-file>
+      <options>indexes</options>
+    </properties>
+
+    <!--
+    <realm-name>demo</realm-name>
+
+    <authorization-constraint>
+      <require-role>AUTHORIZED</require-role>
+    </authorization-constraint>
+    -->
+  </service>
+
+  <service>
+    <name>commandcenter-directory</name>
+    <description>Directory service for the Command Center files</description>
+    <accept>http://${gateway.host}:${gateway.base.port}/commandcenter</accept>
+
+    <type>directory</type>
+    <properties>
+      <directory>/commandcenter</directory>
+      <welcome-file>index.html</welcome-file>
+      <error-pages-directory>/error-pages</error-pages-directory>
+      <options>indexes</options>
+    </properties>
+  </service>
+
+  <security>
+
+  <keystore>
+      <type>JCEKS</type>
+      <file>keystore.db</file>
+      <password-file>keystore.pw</password-file>
+    </keystore>
+
+    <truststore>
+      <file>truststore.db</file>
+    </truststore>
+
+    <realm>
+      <name>demo</name>
+      <description>Kaazing WebSocket Gateway Demo</description>
+      <authentication>
+        <http-challenge-scheme>Application Basic</http-challenge-scheme>
+        <authorization-timeout>1800</authorization-timeout>
+        <login-modules>
+		  <login-module>
+            <type>file</type>
+            <success>required</success>
+            <options>
+              <file>jaas-config.xml</file>
+            </options>
+          </login-module>
+        </login-modules>
+      </authentication>
+    </realm>
+
+    <realm>
+      <name>commandcenter</name>
+      <description>Command Center</description>
+      <authentication>
+        <http-challenge-scheme>Application Basic</http-challenge-scheme>
+        <http-cookie>kaazingCommandCenter</http-cookie>
+        <authorization-timeout>1800</authorization-timeout>
+        <login-modules>
+          <login-module>
+            <type>file</type>
+            <success>required</success>
+            <options>
+              <file>jaas-config.xml</file>
+            </options>
+          </login-module>
+        </login-modules>
+      </authentication>
+    </realm>
+  </security>
+
+
+  <!-- Proxy service to Apache MQ MQTT protocol -->
+  <service>
+    <name>MqttProxy</name>
+    <description>Proxy Service</description>
+    <accept>ws://${gateway.host}:${gateway.extras.port}/mqttproxy</accept>
+	<connect>tcp://${mqtt.provider.host}:1883</connect>
+
+    <type>proxy</type>
+
+    <!--
+    <realm-name>demo</realm-name>
+
+    <authorization-constraint>
+      <require-role>AUTHORIZED</require-role>
+    </authorization-constraint>
+    -->
+
+    <cross-site-constraint>
+      <allow-origin>*</allow-origin>
+    </cross-site-constraint>
+  </service>
+ 
+  <service>
+    <name>session</name>
+    <description>session service</description>
+    <accept>http://${gateway.host}:${gateway.extras.port}/session</accept>
+
+    <type>session</type>
+
+    <!--
+    <realm-name>demo</realm-name>
+
+    <authorization-constraint>
+      <require-role>AUTHORIZED</require-role>
+    </authorization-constraint>
+    -->
+  </service>
+
+  <service>
+    <name>JMX Management</name>
+    <description>JMX management service</description>
+
+    <type>management.jmx</type>
+
+    <properties>
+      <connector.server.address>jmx://${gateway.host}:2020/</connector.server.address>
+    </properties>
+
+    <realm-name>demo</realm-name>
+
+    <authorization-constraint>
+      <require-role>ADMINISTRATOR</require-role>
+    </authorization-constraint>
+  </service>
+
+  <service>
+    <name>SNMP Management</name>
+    <description>SNMP management service</description>
+    <accept>ws://${gateway.host}:${gateway.base.port}/snmp</accept>
+
+    <type>management.snmp</type>
+
+    <realm-name>commandcenter</realm-name>
+
+    <authorization-constraint>
+      <require-role>ADMINISTRATOR</require-role>
+    </authorization-constraint>
+
+    <cross-site-constraint>
+      <allow-origin>*</allow-origin>
+    </cross-site-constraint>
+  </service>
+
+  <service-defaults>
+    <mime-mapping>
+      <extension>html</extension>
+      <mime-type>text/html</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+      <extension>htm</extension>
+      <mime-type>text/html</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+      <extension>js</extension>
+      <mime-type>text/javascript</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+      <extension>png</extension>
+      <mime-type>image/png</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+      <extension>gif</extension>
+      <mime-type>image/gif</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+      <extension>jpg</extension>
+      <mime-type>image/jpeg</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+      <extension>jpeg</extension>
+      <mime-type>image/jpeg</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+      <extension>css</extension>
+      <mime-type>text/css</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+      <extension>swf</extension>
+      <mime-type>application/x-shockwave-flash</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+      <extension>xap</extension>
+      <mime-type>application/x-silverlight-app</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+      <extension>htc</extension>
+      <mime-type>text/x-component</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+      <extension>jnlp</extension>
+      <mime-type>application/x-java-jnlp-file</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+      <extension>manifest</extension>
+      <mime-type>text/cache-manifest</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+      <extension>appcache</extension>
+      <mime-type>text/cache-manifest</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+      <extension>vtt</extension>
+      <mime-type>text/vtt</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+      <extension>aspx</extension>
+      <mime-type>text/html</mime-type>
+    </mime-mapping>
+  </service-defaults>
+</gateway-config>
+
