@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+    Copyright (c) 2007-2012, Kaazing Corporation. All rights reserved.
+
+-->
+<!-- This it the usual OOTB log4j-config.xml file (from core.gateway) with the following changes made:
+     - Add loggers service.stomp.jms and com.kaazing.gateway.jms to get trace level JMS messages
+     - Change level of root logger to all
+     - Remove all levels and appenders from all <logger> elements except com.kaazing.gateway.server.Gateway
+       (useful for the gateway startup and shutdown messages)
+-->
+
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+    <appender name="ErrorFile" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="${GATEWAY_LOG_DIRECTORY}/error.log"/>
+        <param name="Append" value="false"/>
+		<layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%c %d %-5p %c [%t] %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%c %d %-5p %c [%t] %m%n"/>
+        </layout>
+    </appender>
+
+   <!-- uncomment to debug transports / connections -->
+   <logger name="transport">
+       <level value="trace"/>
+   </logger>
+
+    <root>
+        <priority value="info"/>
+        <appender-ref ref="ErrorFile"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</log4j:configuration>
