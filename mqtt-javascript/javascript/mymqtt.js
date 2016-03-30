@@ -321,8 +321,8 @@ function disconnect()
 /**
  * Sends a message to a specific destination at the remote STOMP Server.
  *
- * @param body the message body
  * @param destination the message destination
+ * @param body the message body
  * @param QoS - QoS for the PUBLISHed message: 0 (default), 1, 2 (as described above)
  */
 function publish(destination, body, QoS)
@@ -402,6 +402,12 @@ function writeFrame(command, headers, body)
 	setLastMessageTimestamp();
 }
 
+/**
+ * Builds the appropriate fixed two-byte header for the command
+ *
+ * @param command - the command string for the current MQTT command
+ * @param headers - array of message header values to include by setting the appropriate bits
+ */
 function buildFixedHeader(command, headers)
 {
 	var code = MSG_TYPES_STRINGS_TO_CODES[command];
@@ -449,6 +455,12 @@ function buildFixedHeader(command, headers)
 	return val;
 }
 
+/**
+ * Builds the appropriate variable header buffer for the command and header values
+ *
+ * @param command - the command string for the current MQTT command
+ * @param headers - array of message header values to include by setting the appropriate bits (not used yet)
+ */
 function buildVariableHeaders(command, headers)
 {
 	switch (command)
@@ -650,6 +662,13 @@ function buildPUBRELHeaders(headers)
 	return buf;
 }
 
+/**
+ * Builds the appropriate variable header buffer for the command and header values
+ *
+ * @param command - the command string for the current MQTT command
+ * @param headers - array of message header values to include by setting the appropriate bits (not used yet)
+ * @param headers - message body (if any)
+ */
 function buildPayload(command, headers, body)
 {
 	switch (command)
