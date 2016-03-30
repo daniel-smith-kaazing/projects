@@ -6,8 +6,10 @@ Dan Smith
 
 MQTT 3.1 specs:
 http://public.dhe.ibm.com/software/dw/webservices/ws-mqtt/mqtt-v3r1.html
+
 MQTT 3.1.1 draft spec:
 http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/csprd01/mqtt-v3.1.1-csprd01.html
+
 Apache MQ MQTT:
 http://activemq.apache.org/mqtt.html
 
@@ -34,6 +36,7 @@ See the MqttProxy section of the config\gateway-config-mqtt-amq.xml config file.
 
 Set that value to the host that Active MQ is running on.
 
+```xml
   <service>
     <name>MqttProxy</name>
     <description>Proxy Service</description>
@@ -55,6 +58,7 @@ Set that value to the host that Active MQ is running on.
     </cross-site-constraint>
     -->
   </service>
+```
 
 ## ACTIVEMQ 
 
