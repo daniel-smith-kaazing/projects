@@ -244,7 +244,8 @@ function connect(location, clientID, username, password, keepAlive,
 					lastWillTopicName, lastWillQoSVal, lastWillMsgStr, lastWillRetainVal)
 {
 	// Credentials may be given...
-	// For now I have not set up security on MQTT.
+	// By default the provided gateway-config.xml does not have required authentication,
+        // nor does the MQTT back-end.
 	connectKeepAlive = keepAlive;
 	var wsf = new WebSocketFactory();
 	socket = wsf.createWebSocket(location);
