@@ -237,7 +237,7 @@ function onclose(event)
  * @param lastWillQoSVal- can be one of 0 (fire and forget, default), 1 (send at least once) or 2 (send at most once)
  * @param lastWillMsgStr - the message that will be sent by the MQTT server on behalf of the client
  *		  if the client is "down"
- * @param lastWillRetailVal - true/false. When true the Last Will topic will retain the last of the 
+ * @param lastWillRetainVal - true/false. When true the Last Will topic will retain the last of the 
  *        Last Will messages published on behalf of this client
  */
 function connect(location, clientID, username, password, keepAlive,
