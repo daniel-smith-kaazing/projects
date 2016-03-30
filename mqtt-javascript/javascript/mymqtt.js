@@ -47,28 +47,38 @@ var keepAliveTimer = null;
 
 var socket;
 var output;
+
 // We want this to be global so
 // we can process multiple frames into it.
 var buffer = new ByteBuffer();
+
 // Keep track of current op we are processing.
 var MQTT_NONE = 0xff;
 var MQTT_LOWEST_OP = 0x10;
 var MQTT_HIGHEST_OP = 0xe0;
+
 // Message type or operation code.
 var opCode = MQTT_NONE;
+
 // Remaining length - Variable header length + payload length.
 var remainingLen = 0;
+
 // This is (remainingLen - variable header length).
 var payloadLen;
+
 // Variable headers (for some message types)
 var variableHeaders;
+
 // Message ID. Range from 0 .. 65535.
 var messageID = 0;
+
 // For received PUBLISH messages, the QoS in the received message.
 // This determines how it is processed.
 var publishQoS = 0;
+
 // For received PUBLISH messages, the received message ID.
 var publishMessageID = -1;
+
 // For received PUBREC messages, the received message ID.
 var pubrecMessageID = -1;
 
@@ -144,10 +154,14 @@ var WEBSOCKET_READY_STATES =
 var QOS_AT_MOST_ONCE = 0x00;
 var QOS_AT_LEAST_ONCE = 0x01;
 var QOS_EXACTLY_ONCE = 0x02;
+
 // PROTOCOL_NAME
 var PROTOCOL_NAME = "MQIsdp";
+
 // Currently version 3
 var PROTOCOL_VERSION = 0x03;
+
+// Flags for sending u/p, other features
 var SEND_USER_PWD = 0xc0;
 var LAST_WILL_FLAG = 0x04;
 var LAST_WILL_RETAIN = 0x20;
@@ -1557,6 +1571,7 @@ function byteToHex(b)
 {
   return hexChar[(b >> 4) & 0x0f] + hexChar[b & 0x0f];
 }
+
 function debugByteBufferAsHex(buf)
 {
 	if (!DEBUG_MQTT)
