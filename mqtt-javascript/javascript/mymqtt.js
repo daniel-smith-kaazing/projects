@@ -225,7 +225,8 @@ function onclose(event)
  *		  if the client is "down"
  * @param lastWillRetailVal - true/false. When true the Last Will topic will retain the last of the 
  *        Last Will messages published on behalf of this client
- */function connect(location, clientID, username, password, keepAlive,
+ */
+function connect(location, clientID, username, password, keepAlive,
 					lastWillTopicName, lastWillQoSVal, lastWillMsgStr, lastWillRetainVal)
 {
 	// Credentials may be given...
@@ -337,7 +338,7 @@ function publish(destination, body, QoS)
  * Writes a WebSocket frame as part of sending an MQTT command.
  *
  * @param command - the command code for the current MQTT command
- * @param QoS - message - the command message (for some commands, this can/will be blank)
+ * @param headers - message headers
  * @param body the message body
  */
 function writeFrame(command, headers, body)
@@ -395,7 +396,7 @@ function writeFrame(command, headers, body)
 	socket.send(frame);
 	
 	// Set this as the connection is still active
-	// (per MQTT 3.1 spec, kept alive only affects sends, not receives,
+	// (per MQTT 3.1 spec, keep alive only affects sends, not receives,
 	// i.e. the server must receive some kind of message from the current client
 	// within the keep alive interval set on the CONNECT command (if this is > 0).
 	setLastMessageTimestamp();
