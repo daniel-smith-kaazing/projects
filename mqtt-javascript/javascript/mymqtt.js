@@ -307,7 +307,7 @@ function unsubscribe(destination, QoS)
 }
 
 /**
- * Disconnects from the remote STOMP server.
+ * Disconnects from the remote MQTT server.
  */
 function disconnect() 
 {
@@ -334,7 +334,7 @@ function disconnect()
 }
 
 /**
- * Sends a message to a specific destination at the remote STOMP Server.
+ * Sends a message to a specific destination at the remote MQTT Server.
  *
  * @param destination the message destination
  * @param body the message body
