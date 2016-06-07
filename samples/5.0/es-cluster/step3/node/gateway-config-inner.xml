@@ -48,7 +48,7 @@
     <!-- DB-related properties -->
     <property>
       <name>db.accept.port</name>
-      <value>54321</value>
+      <value>8001</value>
     </property>
     <property>
       <name>db.hostname</name>
@@ -57,6 +57,14 @@
     <property>
       <name>db.connect.port</name>
       <value>5432</value>
+    </property>
+    <property>
+      <name>socks.host</name>
+      <value>node1</value>
+    </property>
+    <property>
+      <name>socks.port</name>
+      <value>1080</value>
     </property>
   </properties>
 
@@ -106,13 +114,17 @@
   <service>
     <name>PosgresQL DB Proxy Service</name>
     <description>TCP proxy service for PostgresQL DB</description>
-    <accept>tcp://${gateway.hostname}:${db.accept.port}</accept>
+    <accept>pipe://es-dbproxy</accept>
     <connect>tcp://${db.hostname}:${db.connect.port}</connect>
 
     <type>proxy</type>
 
     <accept-options>
-      <tcp.bind>${db.accept.port}</tcp.bind>
+      <pipe.transport>socks://${socks.host}:${socks.port}</pipe.transport>
+      <socks.mode>reverse</socks.mode>
+      <socks.retry.maximum.interval>10 seconds</socks.retry.maximum.interval>
+      <socks.transport>ws://${socks.host}:${gateway.port}/dbproxy</socks.transport>
+      <ws.inactivity.timeout>60 seconds</ws.inactivity.timeout>
     </accept-options>
   </service>
 

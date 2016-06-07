@@ -8,7 +8,6 @@ services:
     container_name: db
     hostname: db
     image: es_db
-
     # We will not set a password to make testing easy.
     command: postgres
 
@@ -27,7 +26,18 @@ services:
     # Uncomment the next two lines to get verbose logging on echo requests
     environment:
       GATEWAY_OPTS: -DLOG4J_CONFIG=/kaazing-gateway/conf/log4j-trace-transport-config.xml -Dgateway.hostname=node1
-    command: gateway.start --config conf/gateway-config-db-proxy.xml
+    command: gateway.start --config conf/gateway-config-node.xml
+
+  inner1:
+    build:
+      context: node
+    container_name: inner1
+    hostname: inner1
+    image: es_inner1
+    # Uncomment the next two lines to get verbose logging on echo requests
+    environment:
+      GATEWAY_OPTS: -DLOG4J_CONFIG=/kaazing-gateway/conf/log4j-trace-transport-config.xml -Dgateway.hostname=node1
+    command: gateway.start --config conf/gateway-config-inner.xml
 
   client:
     build:

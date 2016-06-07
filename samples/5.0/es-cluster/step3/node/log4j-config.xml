@@ -75,7 +75,6 @@
         </layout>
     </appender>
 
-<!--
     <logger name="transport.http">
         <level value="info"/>
         <appender-ref ref="AccessFile"/>
@@ -89,12 +88,6 @@
     <logger name="transport.wseb">
         <level value="info"/>
         <appender-ref ref="AccessFile"/>
-    </logger>
--->
-
-    <logger name="transport">
-        <level value="trace"/>
-        <appender-ref ref="STDOUT"/>
     </logger>
 
     <logger name="org.kaazing.gateway.service.proxy">

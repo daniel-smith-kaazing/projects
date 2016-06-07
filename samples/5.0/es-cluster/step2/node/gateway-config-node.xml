@@ -52,11 +52,11 @@
     </property>
     <property>
       <name>db.hostname</name>
-      <value>db</value>
+      <value>inner1</value>
     </property>
     <property>
       <name>db.connect.port</name>
-      <value>5432</value>
+      <value>8001</value>
     </property>
   </properties>
 
