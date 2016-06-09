@@ -1,0 +1,8 @@
+#!/bin/bash
+docker-compose stop
+docker-compose kill
+docker-compose rm -afv
+if [ ! -z "$1" ]; then
+  docker network rm $1
+fi
+docker-compose up

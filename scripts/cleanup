@@ -1,10 +1,25 @@
 #!/bin/bash
-COMPOSEFILE=$1
+REBUILD=$1
 
-if [ -z "$COMPOSEFILE" ]; then
-  COMPOSEFILE=docker-compose.yml
+if [ "$REBUILD" == "-rebuild" ]; then
+  if [ -z "$2" ]; then
+    echo You must provide a carefully chosen image search string to use -rebuild.
+    echo Good-bye!
+    exit 1
+  else
+    echo -rebuild $2 specified. These images will be removed:
+    docker images | grep $2
+    echo Are you sure you want to do that? Ctrl-C to stop.
+    read $INPUTSTR
+  fi
 fi
-docker-compose -f $COMPOSEFILE stop
-docker-compose -f $COMPOSEFILE kill
-docker-compose -f $COMPOSEFILE rm -afv
-docker-compose -f $COMPOSEFILE build
+
+docker-compose -f docker-compose.yml stop
+docker-compose -f docker-compose.yml kill
+docker-compose -f docker-compose.yml rm -afv
+if [ "$REBUILD" == "-rebuild" ]; then
+  echo docker rmi -f `docker images | grep $2 | awk '{ print $1 }'`
+  docker images | grep $2 | awk '{ print $1 }'
+  docker rmi -f `docker images | grep $2 | awk '{ print $1 }'`
+fi
+docker-compose -f docker-compose.yml build

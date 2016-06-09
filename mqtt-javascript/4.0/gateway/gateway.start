@@ -38,4 +38,7 @@ done
 # Add a directory for management support
 JAVA_LIBRARY_PATH="$GW_HOME/lib/sigar"
 
+# Remove
+echo about to execute:
+echo java $GATEWAY_OPTS -Djava.library.path="$JAVA_LIBRARY_PATH" -XX:+HeapDumpOnOutOfMemoryError -cp "$CP" com.kaazing.gateway.server.Main $*
 java $GATEWAY_OPTS -Djava.library.path="$JAVA_LIBRARY_PATH" -XX:+HeapDumpOnOutOfMemoryError -cp "$CP" com.kaazing.gateway.server.Main $*
