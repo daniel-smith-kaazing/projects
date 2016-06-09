@@ -11,10 +11,13 @@ RUN apt-get -qqy install zulu-8=8.6.0.1
 RUN apt-get install -y curl
 
 # Add the latest released version of gateway,
-RUN curl -L -o gateway.tar.gz http://10.0.67.121/artifactory/archiva-internal/com/kaazing/gateway/com.kaazing.gateway.assembly.full/4.0.9.383/com.kaazing.gateway.assembly.full-4.0.9.383.tar.gz
-RUN tar -xvf gateway.tar.gz
-RUN rm gateway.tar.gz
-RUN mv kaazing-* kaazing-gateway
+ENV KAAZING_GATEWAY_URL http://download.kaazing.com/com/download/jms/4.0.9.626/kaazing-websocket-gateway-jms-4.0.9.tar.gz
+RUN curl -L -o gateway.tar.gz $KAAZING_GATEWAY_URL \
+        && tar -xvf gateway.tar.gz \
+        && rm gateway.tar.gz \
+        && mv kaazing-* kaazing-gateway \
+        && rm -rf /apache-activemq-5.10.0
+
 
 # Add fixed gateway.start
 ADD gateway.start /kaazing-gateway/bin/
@@ -23,7 +26,7 @@ ADD gateway.start /kaazing-gateway/bin/
 ADD log4j-config.xml /kaazing-gateway/conf/
 
 # Define mountable directories
-VOLUME ["kaazing-gateway/"]
+#VOLUME ["kaazing-gateway/"]
 
 # Expose Ports
 EXPOSE 8000 8001

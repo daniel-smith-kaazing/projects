@@ -1,16 +1,21 @@
-amq:
-  build: ../../tools.docker/3rd-party/activemq-5.10.0
-  hostname: amq.kaazing.test
+version: '2.0'
 
-gateway: 
-  build: gateway
-  hostname: gateway.kaazing.test
-  environment:
-    GATEWAY_OPTS: -Xmx512m -Dgateway.host=gateway.kaazing.test -Dmqtt.provider.host=amq.kaazing.test
-  links:
-    - amq:amq.kaazing.test
-  ports:
-    - "8000:8000"
-    - "8001:8001"
+services:
+  amq:
+    build: ../../../tools.docker/3rd-party/activemq-5.10.0
+    hostname: amq.kaazing.test
+    container_name: mqtt_amq
+
+  gateway: 
+    build: gateway
+    hostname: gateway.kaazing.test
+    container_name: mqtt_gateway
+    environment:
+      GATEWAY_OPTS: -Xmx512m -Dgateway.host=gateway.kaazing.test -Dmqtt.provider.host=amq.kaazing.test
+    links:
+      - amq:amq.kaazing.test
+    ports:
+      - "8000:8000"
+      - "8001:8001"
 
 
