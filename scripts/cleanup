@@ -1,0 +1,10 @@
+#!/bin/bash
+COMPOSEFILE=$1
+
+if [ -z "$COMPOSEFILE" ]; then
+  COMPOSEFILE=docker-compose.yml
+fi
+docker-compose -f $COMPOSEFILE stop
+docker-compose -f $COMPOSEFILE kill
+docker-compose -f $COMPOSEFILE rm -afv
+docker-compose -f $COMPOSEFILE build

@@ -1,0 +1,14 @@
+#!/bin/sh
+export DOCKER_DIR=/c/Users/DanielSmith/Google\ Drive/Docker
+if [ ! -e $HOME/Docker ]
+then
+  ln -s "$DOCKER_DIR" $HOME/Docker
+fi
+# Add it to the path regardless as this is done on login
+export PATH=$PATH:$HOME/Docker/scripts
+ls -l $HOME/Docker
+# Add docker-compose
+sudo $HOME/Docker/scripts/install-docker-compose-as-sudo.sh
+# Test it
+echo always use sudo with docker-compose on windows.
+sudo docker-compose help

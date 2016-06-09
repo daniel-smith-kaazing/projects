@@ -1,0 +1,9 @@
+#!/bin/sh
+SUITE=$1
+
+if [ -z "$SUITE" ]; then
+  echo You must provide a string to search for in the image names. Good-bye!
+  exit 1
+fi
+
+docker rmi -f `docker images | grep $SUITE | awk '{ print $1 }'`
