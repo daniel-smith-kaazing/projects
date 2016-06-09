@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ "$1" == "-rebuild" ]; then
+  REBUILD=true
+fi
+
+docker-compose stop
+docker-compose kill
+docker-compose rm -afv
+
+if [ "$REBUILD" == "true" ]; then
+  docker rmi -f `docker images | egrep "es_node|es_inner|es_client" | awk '{ print $3 }'`
+fi
+docker-compose build

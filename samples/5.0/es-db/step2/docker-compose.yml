@@ -1,0 +1,84 @@
+version: '2.0'
+
+services: 
+  # Database - it could be any service listening on a TCP port
+  db:
+    build:
+      context: db
+    container_name: db
+    hostname: db
+    image: es_db
+    # We will not set a password to make testing easy.
+    command: postgres
+
+  # Once it is running:
+  # docker exec node1 ifconfig | grep addr (to find the IP)
+  # Edit /etc/hosts to put hostname node1 in IP
+  #
+  # Test in browser
+  # Go to http://node1:8000 and test echo service.
+  node1:
+    build:
+      context: node
+    container_name: node1
+    hostname: node1
+    image: es_node1
+    # Uncomment the next two lines to get verbose logging on echo requests
+    environment:
+      GATEWAY_OPTS: -DLOG4J_CONFIG=/kaazing-gateway/conf/log4j-trace-transport-config.xml -Dgateway.hostname=node1
+    command: gateway.start --config conf/gateway-config-node.xml
+
+  inner1:
+    build:
+      context: node
+    container_name: inner1
+    hostname: inner1
+    image: es_inner1
+    # Uncomment the next two lines to get verbose logging on echo requests
+    environment:
+      GATEWAY_OPTS: -DLOG4J_CONFIG=/kaazing-gateway/conf/log4j-trace-transport-config.xml -Dgateway.hostname=node1
+    command: gateway.start --config conf/gateway-config-inner.xml
+
+  client:
+    build:
+      context: client
+    container_name: client
+    hostname: client
+    image: es_client
+    #
+    # Once you see "client ready" in the docker-compose console, 
+    # you can test queries from a console on the docker host by executing
+    # the PostgresQL client, psql. To test connecting directly to host db:
+    #
+    # docker exec -it client psql -U postgres -p 5432 -h db
+    #
+    # To test connecting through the TCP proxy service on node1, change the host and port:
+    #
+    # docker exec -it client psql -U postgres -p 54321 -h node1
+    #
+    # Note that the gateway on node1 is listening on a tcp port 54321.
+    # Its tcp proxy service will forward the requests to db:5432.
+    #
+    # With either, you can test queries such as:
+    #
+    # select 1;
+    #
+    # or:
+    #
+    # select * from information_schema.tables where table_name like 'a%';
+    #
+    # Use \q to quit.
+    #
+    # Errors in your queries will be displayed by container db in the docker-compose console 
+    # and can be retrieved thus:
+    #
+    # docker logs db
+    #
+    # The command is a technique to make the container stay around until it is shut down,
+    # after waiting 15 seconds for the other containers to come up.
+    #
+    command: /bin/sh -c "sleep 15; echo client ready; while true; do sleep 1; done"
+    links:
+      - db:db
+      - node1:node1
+
