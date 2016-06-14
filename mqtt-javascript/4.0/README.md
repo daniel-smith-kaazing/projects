@@ -67,13 +67,57 @@ to listen for MQTT connections on:
 
 http://0.0.0.0:1883 - listens on all available network interfaces on port 1883.
 
+# /etc/hosts
+You need to add the IP address for the *mqtt_gateway* container to your Docker hosts' /etc/hosts file. You can find that out like this:
+
+```
+docker exec -it mqtt_gateway ifconfig
+```
+
+That will return something like this:
+
+```
+eth0      Link encap:Ethernet  HWaddr 02:42:ac:12:00:03  
+          inet addr:172.18.0.3  Bcast:0.0.0.0  Mask:255.255.0.0
+          inet6 addr: fe80::42:acff:fe12:3/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:71 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:16 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:10193 (10.1 KB)  TX bytes:1320 (1.3 KB)
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:120 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:120 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:9055 (9.0 KB)  TX bytes:9055 (9.0 KB)
+
+```
+
+Look for the *eth0* inet addr, in this case *172.18.0.3.
+
+In this example, these entries would be added to the /etc/hosts file:
+
+```
+172.18.0.3 gateway.kaazing.test
+```
+
 # RUNNING
 
-Run the gateway and Active MQ. Use --config gateway-config-mqtt-amq.xml.
+```
+docker-compose up [-d]
+```
 
-Load this in the browser (your.host, port, and path may vary - I am using the default
-"extras" port in the gateway):
-http:/YOUR-HOST:8001/demo/PATH-TO-YOUR-MQTT-FILES-DIR/mqtt.html
+Use -d to put it in the background (if you want).
+
+```
+http://gateway.kaazing.test:8001/demo/gateway/javascript/mqtt.html
+```
+
+You can load two copies in two browser tabs/windows - one can publish, and the other can subscribe.
 
 ## CONNECT
 
