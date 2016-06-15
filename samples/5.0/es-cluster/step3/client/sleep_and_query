@@ -1,9 +1,0 @@
-#!/bin/bash
-SLEEP=$1
-
-if [ -z "$SLEEP" ]; then
-  SLEEP=60
-fi
-
-sleep $SLEEP
-psql -U postgres -p 5432 -h db

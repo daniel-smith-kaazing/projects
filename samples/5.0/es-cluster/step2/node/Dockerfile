@@ -7,4 +7,4 @@ RUN apt-get update \
 
 # Add our configuration files
 ADD log4j-*.xml /kaazing-gateway/conf/
-ADD gateway-*.xml /kaazing-gateway/conf/
+ADD gateway-config-*.xml /kaazing-gateway/conf/
