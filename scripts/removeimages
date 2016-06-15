@@ -1,0 +1,15 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+  echo You must specify an egrep pattern to remove docker images that match it.
+  echo example: "prefix1_|prefix2" 
+  echo QUOTES ARE REQUIRED
+  exit 1
+fi
+
+echo about to remove these images: `docker images | egrep "$1" | awk '{print $1 }'`
+
+echo Are you sure??? Ctrl-C to abort, ENTER to continue
+read DISCARD
+
+docker rmi -f `docker images | egrep "$1" | awk '{ print $1 }'`
+echo Done.
