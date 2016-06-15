@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<title>MQTT implementation syntax checker</title>
+<h1>MQTT implementation syntax checker</h1>
+
+<div class="panel">
+	<label>CONNECT:</label>
+</div>
+
+<div class="panel">
+	<label for="url">Proxy URL:</label>
+	<input type="text" id="url" size="35" placeholder="ws://gateway.kaazing.me:8001/mqttproxy">
+	
+	<label for="clientID">Client ID (UNIQUE):</label>
+	<input type="text" id="clientID" size="10" placeholder="123abc">
+</div>
+
+<div class="panel">
+	<label for="username">Username:</label>
+	<input type="text" id="username" size="10" placeholder="user">
+	
+	<label for="password">Password:</label>
+	<input type="text" id="password" size="10" placeholder="pwd">
+	
+	<label for="keepAlive">Keep Alive (sec):</label>
+	<input type="text" id="keepAlive" size="6" placeholder="0">
+	
+	<button id="connectButton">Connect</button>
+	<button id="disconnectButton">Disconnect</button>
+</div>
+
+<div class="panel">
+	<label>ADVANCED CONNECTION OPTIONS:</label>
+</div>
+
+<div class="panel"?
+	<label for="lastWill">Last Will Enabled:</label>
+    <select id = "lastWill">
+		<option value = "0">FALSE</option>
+		<option value = "1">TRUE</option>
+	</select>
+	
+	<label for="lastWillTopic">Last Will Topic:</label>
+	<input type="text" id="lastWillTopic" placeholder="topic/lastwill">
+	
+	<label for="lastWillMsg">Last Will Message:</label>
+	<input type="text" id="lastWillMsg" size=30 placeholder="client seems to be down.">
+
+	<label for="lastWillQoS">Requested Last Will QoS:</label>
+    <select id = "lastWillQoS">
+		<option value = "0">AT MOST ONCE</option>
+		<option value = "1">AT LEAST ONCE</option>
+		<option value = "2">EXACTLY ONCE</option>
+	</select>
+	
+	<label for="retainLastWill">Retain Last Will PUBLISHed:</label>
+    <select id = "retainLastWill">
+		<option value = "0">FALSE</option>
+		<option value = "1">TRUE</option>
+	</select>
+</div>
+
+<div class="panel">
+	<label for="simulateClientDown">Simulate Client Down (no PINGREQ):</label>
+    <select id = "simulateClientDown">
+		<option value = "0">FALSE</option>
+		<option value = "1">TRUE</option>
+	</select>
+	
+</div>
+
+<div class="panel">
+	<label>SUBSCRIBE:</label>
+</div>
+
+<div class="panel">
+	<label for="destination">Subscription Topic:</label>
+	<input type="text" id="destination" placeholder="topic/mqtttopic">
+	
+	<label>Requested Topic QoS:</label>
+    <select id = "topicQoS">
+		<option value = "0">AT MOST ONCE</option>
+		<option value = "1">AT LEAST ONCE</option>
+		<option value = "2">EXACTLY ONCE</option>
+	</select>
+	
+	<button id="subscribeButton">Subscribe</button>
+	<button id="unsubscribeButton">Unsubscribe</button>
+</div>
+
+<div class="panel">
+	<label>PUBLISH:</label>
+</div>
+
+<div class="panel">
+	<label for="publishDest">Publish Topic:</label>
+	<input type="text" id="publishDest" size="20" placeholder="topic/mqtttopic">
+	
+	<label>Requested Publish QoS:</label>
+    <select id = "publishQoS">
+		<option value = "0">AT MOST ONCE</option>
+		<option value = "1">AT LEAST ONCE</option>
+		<option value = "2">EXACTLY ONCE</option>
+	</select>
+	
+	<label>Retain Last PUBLISHed:</label>
+    <select id = "retainLast">
+		<option value = "0">FALSE</option>
+		<option value = "1">TRUE</option>
+	</select>
+</div>
+
+<div class="panel">
+	<label for="sendDuplicates">Send Duplicate Message:</label>
+    <select id = "sendDuplicates">
+		<option value = "0">FALSE</option>
+		<option value = "1">TRUE</option>
+	</select>
+</div>
+
+<div class="panel">
+	<label for="message">Message To Publish:</label>
+	<input type="text" id="message" size="80" maxlength="999999" placeholder="Hello from MQTT client.">
+	<button id="publishButton">Publish Message</button>
+</div>
+
+<div class="panel">
+	<label for="message">Text File To Publish:</label>
+	<input type="file" id="publishFileInput">
+	<button id="publishFileButton">Publish File Contents</button>
+</div>
+
+<div class="panel">
+	<label>LOGGING:</label>
+</div>
+
+<div class="panel">
+	<label>Verbose output:</label>
+    <select id = "verboseOutput">
+		<option value = "0">FALSE</option>
+		<option value = "1">TRUE</option>
+	</select>
+	<button id="clearButton">Clear Log</button>
+</div>
+
+
+<div id="output"></div>
+
+<script type="text/javascript" src="WebSocket.js"></script>
+<script type="text/javascript" src="mymqtt.js"></script>
+<script>
+setup();
+
+var verboseOutput = document.getElementById('verboseOutput');
+verboseOutput.addEventListener('change', setVerboseOutput, false);
+
+function setVerboseOutput()
+{
+	outputVal = parseInt(verboseOutput.value);
+	setDebugMQTT(outputVal == 1);
+}
+
+var sendDuplicates = document.getElementById('sendDuplicates');
+sendDuplicates.addEventListener('change', setSendDuplicates, false);
+
+function setSendDuplicates()
+{
+	outputVal = parseInt(sendDuplicates.value);
+	setSendDuplicateMessages(outputVal == 1);
+}
+
+var retainLast = document.getElementById('retainLast');
+retainLast.addEventListener('change', setRetainLast, false);
+
+function setRetainLast()
+{
+	outputVal = parseInt(retainLast.value);
+	setRetainLastMessage(outputVal == 1);
+}
+
+var lastWill = document.getElementById('lastWill');
+lastWill.addEventListener('change', setLastWill, false);
+
+function setLastWill()
+{
+	outputVal = parseInt(lastWill.value);
+	setLastWillEnabled(outputVal == 1);
+}
+
+var simClientDown = document.getElementById('simulateClientDown');
+simClientDown.addEventListener('change', setSimulateClient, false);
+
+function setSimulateClient()
+{
+	outputVal = parseInt(simClientDown.value);
+	setSimulateClientDown(outputVal == 1);
+}
+
+var publishFileContents;
+
+document.getElementById('publishFileInput').addEventListener('change', readSingleFile, false);
+
+var publishFileButton = document.getElementById("publishFileButton");
+publishFileButton.disabled = true;
+
+function readSingleFile(evt) 
+{
+    //Retrieve the first (and only!) File from the FileList object
+    var f = evt.target.files[0]; 
+
+    if (f) 
+	{
+		var r = new FileReader();
+		r.onload = function(e) 
+		{ 
+		    if (f.size < 80)
+				startsWithLen = f.size;
+			else
+				startsWithLen = 80;
+			
+			publishFileContents = e.target.result;
+			publishFileButton.disabled = false;
+			
+			alert( "Got the file.\n" 
+				+"name: " + f.name + "\n"
+				+"type: " + f.type + "\n"
+				+"size: " + f.size + " bytes\n"
+				+ "starts with: " 
+				+ publishFileContents.substr(0, startsWithLen));		
+		}		
+		
+		r.readAsText(f);
+    }
+	else 
+	{ 
+		alert("Failed to load file");
+    }
+}
+
+
+var disconnectButton = document.getElementById("disconnectButton");
+disconnect.disabled = true;
+
+var connectButton = document.getElementById("connectButton");
+connectButton.onclick = function() 
+{
+	// WebSocket portion
+    var urlField = document.getElementById("url");
+	var urlString = urlField.value || urlField.placeholder;
+	// MQTT portion
+	var clientID = document.getElementById("clientID");
+	var clientStr = clientID.value || clientID.placeholder;
+    var username = document.getElementById("username");
+	var usernameStr = username.value || username.placeholder;
+    var password = document.getElementById("password");
+	var passwordStr = password.value || password.placeholder;
+	
+	var lastWillTopicStr = null;
+	var lastWillQoSVal = 0;
+	var lastWillRetainVal = false;
+	var lastWillMsgStr = null;
+	
+	// Handle "Will" fields.
+	if (MQTT_LAST_WILL_ENABLED)
+	{
+		var lastWillTopic = document.getElementById("lastWillTopic");
+		lastWillTopicStr = lastWillTopic.value || lastWillTopic.placeholder;
+		
+		var lastWillQoS = document.getElementById("lastWillQoS");
+		lastWillQoSVal = parseInt(lastWillQoS.value);
+		
+		var lastWillRetain = document.getElementById("retainLastWill");
+		lastWillRetainVal = (lastWillRetain.value == "1");
+
+		var lastWillMsg = document.getElementById("lastWillMsg");
+		lastWillMsgStr = lastWillMsg.value || lastWillMsg.placeholder;
+	}
+		
+	try
+	{
+		var keepAlive = document.getElementById("keepAlive");
+		var keepAliveInt = parseInt(keepAlive.value || keepAlive.placeholder);
+		if ((keepAliveInt < 0) || (keepAliveInt > 65535))
+			throw "Invalid Keep Alive value: " + keepAlive.value;
+			
+		disconnectButton.disabled = false;
+		connectButton.disabled = true;
+		// TODO - last param is for QoS
+		connect(urlString, clientStr, usernameStr, passwordStr, keepAliveInt,
+			lastWillTopicStr, lastWillQoSVal, lastWillMsgStr, lastWillRetainVal);
+	}
+	catch(e)
+	{
+		log(e);
+		disconnectButton.disabled = true;
+		connectButton.disabled = false;
+	}
+}
+
+disconnectButton.onclick = function() 
+{
+	try
+	{
+		disconnectButton.disabled = true;
+		connectButton.disabled = false;
+		disconnect();
+	}
+	catch(e)
+	{
+		log(e);
+	}
+}
+
+var unsubscribeButton = document.getElementById("unsubscribeButton");
+unsubscribeButton.disabled = true;
+
+var subscribeButton = document.getElementById("subscribeButton");
+subscribeButton.disabled = false;
+
+subscribeButton.onclick = function() 
+{
+    var destination = document.getElementById("destination");
+	var destinationStr = destination.value || destination.placeholder;
+	var topicQoS = document.getElementById("topicQoS");
+	var topicQosVal = parseInt(topicQoS.value);
+	
+	try
+	{
+		unsubscribeButton.disabled = false;
+		subscribeButton.disabled = true;
+		// We will acknowledge each received msg to avoid replays
+		// TODO - last param is for QoS
+		subscribe(destinationStr, topicQosVal);
+	}
+	catch(e)
+	{
+		log(e);
+		unsubscribeButton.disabled = true;
+		subscribeButton.disabled = false;
+	}
+}
+
+unsubscribeButton.onclick = function() 
+{
+    var destination = document.getElementById("destination");
+	var destinationStr = destination.value || destination.placeholder;
+	
+	try
+	{
+		unsubscribeButton.disabled = true;
+		subscribeButton.disabled = false;
+		// We will acknowledge each received msg to avoid replays
+		// TODO - last param is for QoS
+		unsubscribe(destinationStr, null);
+	}
+	catch(e)
+	{
+		log(e);
+		unsubscribeButton.disabled = false;
+		subscribeButton.disabled = true;
+	}
+}
+
+var publishButton = document.getElementById("publishButton");
+publishButton.onclick = function() 
+{
+	try
+	{
+		var destination = document.getElementById("publishDest");
+		var destinationStr = destination.value || destination.placeholder;
+		var msgBody = document.getElementById("message");
+		var msgBodyStr = msgBody.value || msgBody.placeholder;
+		var publishQoS = document.getElementById("publishQoS");
+		var publishQosVal = parseInt(publishQoS.value);
+		// TODO - last param is for QoS
+		publish(destinationStr, msgBodyStr, publishQosVal);
+	}
+	catch(e)
+	{
+		log(e);
+	}
+}
+
+publishFileButton.onclick = function() 
+{
+	try
+	{
+		var destination = document.getElementById("publishDest");
+		var destinationStr = destination.value || destination.placeholder;
+		var publishQoS = document.getElementById("publishQoS");
+		var publishQosVal = parseInt(publishQoS.value);
+		// TODO - last param is for QoS
+		publish(destinationStr, publishFileContents, publishQosVal);
+	}
+	catch(e)
+	{
+		log(e);
+	}
+}
+
+var clearButton = document.getElementById("clearButton");
+
+clearButton.onclick = function() 
+{
+	try
+	{
+		clearLog();
+	}
+	catch(e)
+	{
+		log(e);
+	}
+}
+</script>

@@ -1,0 +1,23 @@
+version: '2.0'
+
+services:
+  amq:
+    build: ../../../tools.docker/3rd-party/activemq-5.10.0
+    container_name: mqtt_amq
+    hostname: amq.kaazing.test
+    image: mqtt_amq
+
+  gateway: 
+    build: gateway
+    container_name: mqtt_gateway
+    hostname: gateway.kaazing.test
+    image: mqtt_gateway
+    environment:
+      GATEWAY_OPTS: -DLOG4j_CONFIG=/kaazing-gateway/conf/log4j-config-verbose.xml -Xmx512m -Dgateway.host=gateway.kaazing.test -Dmqtt.provider.host=amq.kaazing.test
+    links:
+      - amq:amq.kaazing.test
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+
+
