@@ -1,0 +1,38 @@
+version: '2.0'
+
+services: 
+  # DEPENDENCIES ARE NOW REVERSED
+  # node1 does not have to connect to echo.
+  # As these now use Enterprise Shield reverse SOCKS connections,
+  # it is echo that must connect back to node1.
+
+  # Once it is running:
+  # docker exec es_node1 ifconfig | grep addr (to find the IP)
+  # Edit /etc/hosts to put hostname node1 in IP
+  #
+  # Test in browser
+  # Go to http://node1:8000 and test echo service.
+  es_node1:
+    build:
+      context: node
+    container_name: es_node1
+    command: bin/gateway.start --config /kaazing-gateway/conf/gateway-config-echo-proxy.xml
+    hostname: node1
+    image: es_node1
+    # Uncomment the next two lines to get verbose logging on echo requests
+    environment:
+      GATEWAY_OPTS: -DLOG4J_CONFIG=/kaazing-gateway/conf/log4j-trace-transport-config.xml -Ddmz.hostname=node1 -Decho.hostname=echo
+      #GATEWAY_OPTS: -Ddmz.hostname=echo
+
+  es_echo:
+    build:
+      context: node
+    container_name: es_echo 
+    hostname: echo
+    image: es_echo
+    # Uncomment the next two lines to get verbose logging on echo requests
+    environment:
+      GATEWAY_OPTS: -DLOG4J_CONFIG=/kaazing-gateway/conf/log4j-trace-transport-config.xml -Ddmz.hostname=node1 -Decho.hostname=echo
+      #GATEWAY_OPTS: -Ddmz.hostname=echo
+    links:
+     - es_node1:node1
