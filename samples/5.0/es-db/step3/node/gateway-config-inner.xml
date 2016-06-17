@@ -123,8 +123,8 @@
       <pipe.transport>socks://${socks.host}:${socks.port}</pipe.transport>
       <socks.mode>reverse</socks.mode>
       <socks.retry.maximum.interval>10 seconds</socks.retry.maximum.interval>
-      <socks.transport>ws://${socks.host}:${gateway.port}/dbproxy</socks.transport>
-      <ws.inactivity.timeout>60 seconds</ws.inactivity.timeout>
+      <socks.transport>ws://${socks.host}:${socks.port}/dbproxy</socks.transport>
+      <ws.inactivity.timeout>10 seconds</ws.inactivity.timeout>
     </accept-options>
   </service>
 

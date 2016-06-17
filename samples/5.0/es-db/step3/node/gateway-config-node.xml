@@ -119,16 +119,20 @@
 
     <type>proxy</type>
 
+    <properties>
+      <prepared.connection.count>1</prepared.connection.count>
+    </properties>
+
     <accept-options>
-      <tcp.bind>${db.accept.port}</tcp.bind>
+      <tcp.bind>${gateway.hostname}:${db.accept.port}</tcp.bind>
     </accept-options>
 
     <connect-options>
       <pipe.transport>socks://${socks.host}:${socks.port}</pipe.transport>
       <socks.mode>reverse</socks.mode>
       <socks.timeout>10 seconds</socks.timeout>
-      <socks.transport>ws://${socks.host}:${gateway.port}/dbproxy</socks.transport>
-      <ws.inactivity.timeout>60 seconds</ws.inactivity.timeout>
+      <socks.transport>ws://${socks.host}:${socks.port}/dbproxy</socks.transport>
+      <ws.inactivity.timeout>10 seconds</ws.inactivity.timeout>
     </connect-options>
   </service>
 

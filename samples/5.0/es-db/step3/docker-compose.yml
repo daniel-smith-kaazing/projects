@@ -8,6 +8,8 @@ services:
     container_name: db
     hostname: db
     image: es_db
+    networks:
+      - es_db-bridge
     # We will not set a password to make testing easy.
     command: postgres
 
@@ -23,7 +25,8 @@ services:
     container_name: node1
     hostname: node1
     image: es_node1
-    # Uncomment the next two lines to get verbose logging on echo requests
+    networks:
+      - es_db-bridge
     environment:
       GATEWAY_OPTS: -DLOG4J_CONFIG=/kaazing-gateway/conf/log4j-trace-transport-config.xml -Dgateway.hostname=node1
     command: gateway.start --config conf/gateway-config-node.xml
@@ -34,7 +37,10 @@ services:
     container_name: inner1
     hostname: inner1
     image: es_inner1
-    # Uncomment the next two lines to get verbose logging on echo requests
+    links:
+      - node1
+    networks:
+      - es_db-bridge
     environment:
       GATEWAY_OPTS: -DLOG4J_CONFIG=/kaazing-gateway/conf/log4j-trace-transport-config.xml -Dgateway.hostname=node1
     command: gateway.start --config conf/gateway-config-inner.xml
@@ -45,7 +51,9 @@ services:
     container_name: client
     hostname: client
     image: es_client
-    #
+    networks:
+      - es_db-bridge
+   #
     # Once you see "client ready" in the docker-compose console, 
     # you can test queries from a console on the docker host by executing
     # the PostgresQL client, psql. To test connecting directly to host db:
@@ -81,4 +89,12 @@ services:
     links:
       - db:db
       - node1:node1
+
+networks:
+  es_db-bridge:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.14.0.0/16
+          gateway: 172.14.0.1
 

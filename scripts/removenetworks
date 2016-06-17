@@ -1,0 +1,15 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+  echo You must specify an egrep pattern to remove docker networks that match it.
+  echo example: "prefix1_|prefix2" 
+  echo QUOTES ARE REQUIRED
+  exit 1
+fi
+
+echo about to remove these networks: `docker network ls | egrep "$1" | awk '{print $2 }'`
+
+echo Are you sure??? Ctrl-C to abort, ENTER to continue
+read DISCARD
+
+docker network rm `docker network ls | egrep "$1" | awk '{ print $2 }'`
+echo Done.
