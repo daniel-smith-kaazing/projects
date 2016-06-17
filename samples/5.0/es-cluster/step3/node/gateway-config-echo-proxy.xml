@@ -76,10 +76,6 @@
 
     <type>proxy</type>
 
-    <properties>
-      <prepared.connection.count>1</prepared.connection.count>
-    </properties>
-
     <accept-options>
       <tcp.bind>${gateway.hostname}:${gateway.port}</tcp.bind>
     </accept-options>

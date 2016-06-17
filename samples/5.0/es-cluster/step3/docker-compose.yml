@@ -31,7 +31,7 @@ services:
     image: es_node1
     # Uncomment the next two lines to get verbose logging on echo requests
     environment:
-      GATEWAY_OPTS: -DLOG4J_CONFIG=/kaazing-gateway/conf/log4j-trace-transport-config.xml -Dgateway.hostname=node1 -Decho.hostname=echo
+      GATEWAY_OPTS: -DLOG4J_CONFIG=/kaazing-gateway/conf/log4j-trace-transport-config.xml -Dgateway.hostname=node1 
       #GATEWAY_OPTS: -Dgateway.hostname=node1
 
 
