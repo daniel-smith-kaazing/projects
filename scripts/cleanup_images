@@ -1,9 +1,13 @@
-#!/bin/sh
-SUITE=$1
+#!/bin/bash
+# This removes untagged images
+findUntagged()
+{
+  docker images -a | grep "^<none>" | awk '{print $3}'
+}
 
-if [ -z "$SUITE" ]; then
-  echo You must provide a string to search for in the image names. Good-bye!
-  exit 1
+CONTS=`docker ps -a -q`
+if [ ! -z "$CONTS" ]; then
+  docker stop $CONTS
 fi
-
-docker rmi -f `docker images | grep $SUITE | awk '{ print $1 }'`
+docker rmi -f `findUntagged`
+docker images

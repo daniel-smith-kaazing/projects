@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 CONTS=`docker ps -a -q`
 if [ ! -z "$CONTS" ]; then
   docker stop $CONTS
