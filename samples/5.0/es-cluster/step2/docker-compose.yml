@@ -31,3 +31,4 @@ services:
       #GATEWAY_OPTS: -Dgateway.hostname=echo
     links:
      - es_echo:echo
+

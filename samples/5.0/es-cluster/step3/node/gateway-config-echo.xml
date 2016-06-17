@@ -21,7 +21,7 @@
   <properties>
 
     <property>
-      <name>dmz.hostname</name>
+      <name>gateway.hostname</name>
       <value>localhost</value>
     </property>
 
@@ -36,9 +36,14 @@
     </property>
 
     <property>
+      <name>socks.host</name>
+      <value>node1</value>
+    </property>
+
+    <property>
       <name>socks.port</name>
       <value>1080</value>
-    </property>
+    </property>  
 
   </properties>
 
@@ -46,7 +51,7 @@
   <service>
     <name>welcome-directory</name>
     <description>Directory service for welcome page</description>
-    <accept>http://${echo.hostname}:${gateway.port}/</accept>
+    <accept>http://${gateway.hostname}:${gateway.port}/</accept>
 
     <type>directory</type>
 
@@ -64,21 +69,18 @@
 
 
   <service>
-    <name>echo proxy service</name>
+    <name>echo proxy</name>
     <description>Simple echo service proxy</description>
-    <!--<accept>ws://${echo.hostname}:${gateway.port}/echo</accept>-->
-    <accept>pipe://echo-proxy-pipe</accept>
-    <connect>ws://localhost:8001/echo</connect>
+    <accept>pipe://es-echoproxy</accept>
 
-    <type>proxy</type>
-   
+    <type>echo</type>
+
     <accept-options>
-      <!--<http.transport>socks://${dmz.hostname}:${socks.port}</http.transport>-->
-      <pipe.transport>socks://${dmz.hostname}:${socks.port}</pipe.transport>
+      <pipe.transport>socks://${socks.host}:${socks.port}</pipe.transport>
       <socks.mode>reverse</socks.mode>
-      <socks.retry.maximum.interval>1 second</socks.retry.maximum.interval>
-      <socks.transport>wsn://${dmz.hostname}:${socks.port}/shield</socks.transport>
-      <ws.inactivity.timeout>60 seconds</ws.inactivity.timeout>
+      <socks.retry.maximum.interval>10 seconds</socks.retry.maximum.interval>
+      <socks.transport>ws://${socks.host}:${socks.port}/echoproxy</socks.transport>
+      <ws.inactivity.timeout>10 seconds</ws.inactivity.timeout>
     </accept-options>
 
     <!-- Restrict cross site constraints before running in production -->
@@ -88,22 +90,10 @@
     </cross-site-constraint>
   </service>
 
-  <service>
-    <name>echo service</name>
-    <description>Simple echo service</description>
-    <accept>ws://localhost:8001/echo</accept>
-
-    <type>echo</type>
-
-    <accept-options>
-      <ws.bind>localhost:8001</ws.bind>
-    </accept-options>
-    
-  </service>
 
   <service>
     <name>JMS Service</name>
-    <accept>ws://${echo.hostname}:${gateway.port}/jms</accept>
+    <accept>ws://${gateway.hostname}:${gateway.port}/jms</accept>
 
     <type>jms</type>
 
@@ -112,7 +102,7 @@
       <context.lookup.topic.format>dynamicTopics/%s</context.lookup.topic.format>
       <context.lookup.queue.format>dynamicQueues/%s</context.lookup.queue.format>
       <env.java.naming.factory.initial>org.apache.activemq.jndi.ActiveMQInitialContextFactory</env.java.naming.factory.initial>
-      <env.java.naming.provider.url>tcp://${echo.hostname}:61616</env.java.naming.provider.url>
+      <env.java.naming.provider.url>tcp://${gateway.hostname}:61616</env.java.naming.provider.url>
     </properties>
 
     <realm-name>demo</realm-name>
@@ -127,13 +117,13 @@
 
   <service>
     <name>AMQP Service</name>
-    <accept>ws://${echo.hostname}:${gateway.port}/amqp</accept>
-    <connect>tcp://${echo.hostname}:5672</connect>
+    <accept>ws://${gateway.hostname}:${gateway.port}/amqp</accept>
+    <connect>tcp://${gateway.hostname}:5672</connect>
 
     <type>amqp.proxy</type>
 
     <properties>
-      <service.domain>${echo.hostname}</service.domain>
+      <service.domain>${gateway.hostname}</service.domain>
       <encryption.key.alias>session</encryption.key.alias>
     </properties>
 
