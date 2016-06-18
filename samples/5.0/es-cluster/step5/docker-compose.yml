@@ -40,6 +40,7 @@ services:
   # Once it is running:
   # docker exec es_node1 ifconfig | grep addr (to find the IP)
   # Edit /etc/hosts to put hostname node1 in IP
+  # Also put either the IP of node1 or node2 as the IP of host "balancer" as well.
   #
   # Test in browser
   # Go to http://node1:8000 and test echo service.
@@ -61,6 +62,7 @@ services:
   # Once it is running:
   # docker exec es_node2 ifconfig | grep addr (to find the IP)
   # Edit /etc/hosts to put hostname node2 in IP
+  # Also put either the IP of node1 or node2 as the IP of host "balancer" as well.
   #
   # Test in browser
   # Go to http://node2:8000 and test echo service.
