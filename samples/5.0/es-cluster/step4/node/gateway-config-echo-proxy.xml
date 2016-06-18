@@ -85,7 +85,7 @@
       <socks.mode>reverse</socks.mode>
       <socks.timeout>10 seconds</socks.timeout>
       <socks.transport>ws://${socks.host}:${socks.port}/echoproxy</socks.transport>
-      <ws.inactivity.timeout>10 seconds</ws.inactivity.timeout>
+      <ws.inactivity.timeout>60 seconds</ws.inactivity.timeout>
     </connect-options>
 
     <!-- Restrict cross site constraints before running in production -->

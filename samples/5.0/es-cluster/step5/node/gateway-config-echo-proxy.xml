@@ -45,13 +45,46 @@
       <value>1080</value>
     </property>  
 
-</properties>
+    <property>
+      <name>cluster.ip1</name>
+      <value>PASS-ME-IN</value>
+    </property>
 
+    <property>
+      <name>cluster.ip2</name>
+      <value>PASS-ME-IN</value>
+    </property>
+
+    <property>
+      <name>balancer.hostname</name>
+      <value>PASS-ME-IN</value>
+    </property>
+
+  </properties>
+
+  <!-- Find the broadcast address for a node's network by using:
+       [docker exec -it CONTAINER] ip maddress show
+  -->
+  <!--
+  <cluster>
+    <name>ESCLUSTER</name>
+    <accept>tcp://${cluster.ip1}:5942</accept>
+    <connect>udp://224.0.0.1:54327</connect>
+  </cluster>
+  -->
+  <!--
+  Alternative using IPs:
+  -->
+  <cluster>
+    <name>ESCLUSTER</name>
+    <accept>tcp://${cluster.ip1}:5942</accept>
+    <connect>tcp://${cluster.ip2}:5942</connect>
+  </cluster>
 
   <service>
     <name>welcome-directory</name>
     <description>Directory service for welcome page</description>
-    <accept>http://${gateway.hostname}:${gateway.port}/</accept>
+    <accept>http://${balancer.hostname}:${gateway.port}/</accept>
 
     <type>directory</type>
 
@@ -65,19 +98,44 @@
         <cache-control>max-age=0</cache-control>
       </location>
     </properties>
+
+    <accept-options>
+      <http.bind>${gateway.port}</http.bind>
+    </accept-options>
+
   </service>
 
+
+  <service>
+    <name>echo proxy balancer</name>
+    <description>Balancer service for echo proxy</description>
+    <accept>ws://${balancer.hostname}:${gateway.port}/echo</accept>
+
+    <type>balancer</type>
+
+    <accept-options>
+      <ws.bind>${gateway.port}</ws.bind>
+    </accept-options>
+
+    <!-- Restrict cross site constraints before running in production -->
+    <cross-site-constraint>
+      <!-- * is not secure for production javascript applications -->
+      <allow-origin>*</allow-origin>
+    </cross-site-constraint>
+  </service>
 
   <service>
     <name>echo proxy</name>
     <description>Simple echo service proxy</description>
     <accept>ws://${gateway.hostname}:${gateway.port}/echo</accept>
     <connect>pipe://es-echoproxy</connect>
+    
+    <balance>ws://${balancer.hostname}:${gateway.port}/echo</balance>
 
     <type>proxy</type>
 
     <accept-options>
-      <tcp.bind>${gateway.hostname}:${gateway.port}</tcp.bind>
+      <ws.bind>${gateway.port}</ws.bind>
     </accept-options>
 
     <connect-options>
