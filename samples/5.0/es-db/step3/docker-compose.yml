@@ -22,6 +22,7 @@ services:
   node1:
     build:
       context: node
+      dockerfile: $DOCKERFILE
     container_name: node1
     hostname: node1
     image: es_node1
@@ -34,6 +35,7 @@ services:
   inner1:
     build:
       context: node
+      dockerfile: $DOCKERFILE
     container_name: inner1
     hostname: inner1
     image: es_inner1
