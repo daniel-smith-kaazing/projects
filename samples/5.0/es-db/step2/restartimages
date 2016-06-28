@@ -1,3 +1,0 @@
-#!/bin/bash
-./buildimages $1
-docker-compose up
