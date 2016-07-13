@@ -1,5 +1,5 @@
 #!/bin/bash
-CONTS=`docker ps -a -q`
+CONTS=`docker ps --filter status=dead --filter status=exited -aq`
 if [ ! -z "$CONTS" ]; then
   docker stop $CONTS
   docker rm $CONTS

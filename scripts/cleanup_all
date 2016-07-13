@@ -1,6 +1,9 @@
 #!/bin/bash
+    
 DIRNAME=`dirname $0`
 $DIRNAME/cleanup_images
 $DIRNAME/cleanup_containers
+$DIRNAME/cleanup_volumes
 docker images
-docker ps
+docker ps -a
+df -k /
