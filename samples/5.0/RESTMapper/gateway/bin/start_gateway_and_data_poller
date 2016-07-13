@@ -1,0 +1,3 @@
+#!/bin/bash
+/data-poller/bin/data-poller &
+/kaazing-gateway/bin/gateway.start
